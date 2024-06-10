@@ -46,7 +46,8 @@ const Profile = () => {
           <StatBox
             title="Selection probability"
             //subtitle={candidate.Résultat}
-            //progress="0.75"
+            progress={`${candidate.predict_proba/100}`} // Using the converted string
+
             increase={`${candidate.predict_proba}%`}
             icon={
               <AccountCircleIcon

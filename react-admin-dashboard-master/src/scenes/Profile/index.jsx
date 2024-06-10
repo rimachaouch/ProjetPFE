@@ -46,7 +46,7 @@ const Profile = () => {
           <StatBox
             title="Profile score"
             //subtitle={candidate.Résultat}
-            //progress="0.75"
+            progress={`${candidate.Score/100}`}
             increase={`${candidate.Score}%`}
             icon={
               <AccountCircleIcon
@@ -67,7 +67,7 @@ const Profile = () => {
           <StatBox
             title="Skill match score"
             //subtitle="Sales Obtained"
-            //progress="0.50"
+            progress={`${candidate.skill_match_score/100}`}
             increase={`${candidate.skill_match_score}%`}
             icon={
               <VerifiedIcon

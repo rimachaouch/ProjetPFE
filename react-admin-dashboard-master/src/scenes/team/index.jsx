@@ -1,17 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Button, TextField, useTheme } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  TextField,
+  useTheme,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
+} from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { useLocation } from "react-router-dom";
-
+import { useLocation, useNavigate } from "react-router-dom";
 import { tokens } from "../../theme";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CancelIcon from "@mui/icons-material/Cancel";
 import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import Header from "../../components/Header";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { useNavigate } from "react-router-dom";
 import emailjs from "emailjs-com"; // Importer emailjs-com
-
 
 const Candidat = () => {
   const theme = useTheme();
@@ -21,11 +29,12 @@ const Candidat = () => {
   const [tableData, setTableData] = useState([]);
   const [interviewCount, setInterviewCount] = useState(0);
   const [selectedCandidateIds, setSelectedCandidateIds] = useState([]);
-  const sortedData= [...tableData].sort((a, b) => b.Score - a.Score);
+  const [openDialog, setOpenDialog] = useState(false); // State for controlling dialog visibility
+  const sortedData = [...tableData].sort((a, b) => b.Score - a.Score);
   const validCandidats = sortedData.filter(
     (candidat) =>
       candidat.Résultat === "Expert" || candidat.Résultat === "Medium"
-  );  
+  );
   const validCandidatIds = validCandidats.map((candidat) => candidat.id);
   const location = useLocation();
 
@@ -33,16 +42,17 @@ const Candidat = () => {
     const storedData = localStorage.getItem("tableData");
     if (storedData) {
       setTableData(JSON.parse(storedData));
-    } 
+    }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("tableData", JSON.stringify(tableData));
-  }, [tableData]);
+    const storedData = localStorage.getItem("tableData");
+    if (storedData) {
+      setTableData(JSON.parse(storedData));
+    }
+  }, []);
 
   useEffect(() => {
-    // Charger les données à partir de la source de données initiale
-    // Si vous avez une source de données comme une API, appelez-la ici
     const fetchData = async () => {
       try {
         const response = await fetch("http://localhost:5000/compare");
@@ -57,16 +67,18 @@ const Candidat = () => {
       fetchData();
     }
   }, [location.pathname]);
+
   const navigate = useNavigate();
 
   const handleDetailsClick = (id) => {
     const candidate = tableData.find((item) => item.id === id);
     navigate(`/Profile/${id}`, { state: { candidate } });
   };
-  
+
   const handleInterviewCountChange = (event) => {
     setInterviewCount(event.target.value);
   };
+
   const handleCVUpload = (event) => {
     const files = event.target.files;
     setCvFiles(files);
@@ -76,7 +88,12 @@ const Candidat = () => {
     const file = event.target.files[0];
     setDescriptionFile(file);
   };
-  const sendEmailsToSelectedCandidates = () => {
+
+  const confirmSendEmails = () => {
+    setOpenDialog(true); // Open the dialog to confirm email sending
+  };
+
+  const handleSendEmails = () => {
     selectedCandidateIds.forEach((candidateId) => {
       const candidate = tableData.find((item) => item.id === candidateId);
       const candidateEmail = candidate.Email;
@@ -103,6 +120,7 @@ const Candidat = () => {
           );
         });
     });
+    setOpenDialog(false); // Close the dialog after sending emails
   };
 
   const handleSend = async () => {
@@ -125,10 +143,13 @@ const Candidat = () => {
 
       data.sort((a, b) => b.Score - a.Score);
 
-    // Sélectionner uniquement le candidat avec le score le plus élevé
-    setSelectedCandidateIds(data.slice(0, interviewCount > 0 ? 1 : 0).map(candidate => candidate.id));
-    
-    setTableData(data);
+      // Sélectionner uniquement le candidat avec le score le plus élevé
+      setSelectedCandidateIds(
+        data.slice(0, interviewCount > 0 ? 1 : 0).map((candidate) => candidate.id)
+      );
+
+      setTableData(data);
+      localStorage.setItem("tableData", JSON.stringify(data));
     } catch (error) {
       console.error("Error sending files:", error);
     }
@@ -177,7 +198,8 @@ const Candidat = () => {
       headerName: "Statut",
       minWidth: 150,
       flex: 1,
-      renderCell: ({ row }) => { // Destructurer row pour accéder à Résultat
+      renderCell: ({ row }) => {
+        // Destructurer row pour accéder à Résultat
         const { Résultat } = row; // Destructuring de Résultat depuis row
 
         const getBackgroundColor = (Résultat) => {
@@ -187,7 +209,7 @@ const Candidat = () => {
             case "Medium":
               return colors.orange[700];
             case "Débutant":
-              return  colors.redAccent[600];
+              return colors.redAccent[600];
             default:
               return colors.grey[700];
           }
@@ -240,12 +262,12 @@ const Candidat = () => {
         </Button>
       ),
     },
-    
   ];
+
   return (
     <Box m="20px">
-  <Header title="Candidatures" subtitle="Gérer les candidatures par poste" />
-  <Box
+      <Header title="Candidatures" subtitle="Gérer les candidatures par poste" />
+      <Box
         m="40px 0 0 0"
         height="75vh"
         sx={{
@@ -277,7 +299,6 @@ const Candidat = () => {
           mb={2}
         >
           <Box display="flex" alignItems="center" mb={2}>
-            
             <TextField
               label="Sélectionner une description de poste"
               variant="outlined"
@@ -360,42 +381,55 @@ const Candidat = () => {
               Envoyer
             </Button>
             <Button
-            variant="contained"
-            color="primary"
-            onClick={sendEmailsToSelectedCandidates}
-            sx={{ width: "auto", minWidth: "auto", ml: 3 }}
-          >
-            Envoyer E-mail
-          </Button>
+              variant="contained"
+              color="primary"
+              onClick={confirmSendEmails}
+              sx={{ width: "auto", minWidth: "auto", ml: 3 }}
+            >
+              Envoyer E-mail
+            </Button>
           </Box>
         </Box>
         <DataGrid
-  checkboxSelection
-  rows={sortedData}
-  columns={columns}
-  selectionModel={selectedCandidateIds}
-  onSelectionModelChange={(ids) => {
-    // Limiter le nombre de candidats sélectionnés au nombre d'interviews spécifié
-    if (ids.length <= interviewCount) {
-      setSelectedCandidateIds(ids);
-    } else {
-      // Si le nombre de candidats sélectionnés dépasse le nombre d'interviews,
-      // ne sélectionner que les premiers candidats valides jusqu'au nombre spécifié
-      setSelectedCandidateIds(ids.slice(0, interviewCount));
-    }
-  }}
-/>
-<Box mt={2} display="flex" justifyContent="flex-end">
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={sendEmailsToSelectedCandidates}
-            sx={{ width: "auto", minWidth: "auto" }}
-          >
-            Envoyer Email
-          </Button>
-        </Box>
+          checkboxSelection
+          rows={sortedData}
+          columns={columns}
+          selectionModel={selectedCandidateIds}
+          onSelectionModelChange={(ids) => {
+            // Limiter le nombre de candidats sélectionnés au nombre d'interviews spécifié
+            if (ids.length <= interviewCount) {
+              setSelectedCandidateIds(ids);
+            } else {
+              // Si le nombre de candidats sélectionnés dépasse le nombre d'interviews,
+              // ne sélectionner que les premiers candidats valides jusqu'au nombre spécifié
+              setSelectedCandidateIds(ids.slice(0, interviewCount));
+            }
+          }}
+        />
       </Box>
+
+      {/* Confirmation Dialog */}
+      <Dialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirmer l'envoi d'e-mail"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Êtes-vous sûr de vouloir envoyer des e-mails aux candidats sélectionnés ?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)} color="primary">
+            Annuler
+          </Button>
+          <Button onClick={handleSendEmails} color="primary" autoFocus>
+            Confirmer
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

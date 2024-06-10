@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Button, TextField, useTheme } from "@mui/material";
+import { Box, Typography, Button, TextField, useTheme, Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
@@ -20,10 +24,16 @@ const CandidatP = () => {
   const sortedData = [...tableData].sort((a, b) => b.predict_proba - a.predict_proba);
   const validCandidats = sortedData.filter((candidat) => candidat.predict_statut === "Validé");
   const validCandidatIds = validCandidats.map((candidat) => candidat.id);
+  const [openDialog, setOpenDialog] = useState(false); // State for controlling dialog visibility
+
 
   useEffect(() => {
-    localStorage.setItem("candidatData", JSON.stringify(tableData));
-  }, [tableData]);
+    // Charger les données depuis localStorage
+    const storedData = localStorage.getItem("tableData");
+    if (storedData) {
+      setTableData(JSON.parse(storedData));
+    }
+  }, []);
 
   const navigate = useNavigate();
   const handleDetailsClick = (id) => {
@@ -35,12 +45,37 @@ const CandidatP = () => {
     const files = event.target.files;
     setCvFiles(files);
   };
+  const confirmSendEmails = () => {
+    setOpenDialog(true); // Open the dialog to confirm email sending
+  };
+  const handleSend = async () => {
+    const formData = new FormData();
+    Array.from(cvFiles).forEach((file) => {
+      formData.append("cvFiles", file);
+    });
+
+    try {
+      const response = await fetch("http://localhost:5000/predict", {
+        method: "POST",
+        body: formData,
+      });
+      let data = await response.json();
+      console.log(data);
+
+      data = data.map((item, index) => ({ ...item, id: index + 1 }));
+      setTableData(data);
+      localStorage.setItem("tableData", JSON.stringify(data));
+
+    } catch (error) {
+      console.error("Error sending files:", error);
+    }
+  };
   const sendEmailsToSelectedCandidates = () => {
-    selectedCandidateIds.forEach((candidateId) => {
+    validCandidatIds.forEach((candidateId) => {
       const candidate = tableData.find((item) => item.id === candidateId);
       const candidateEmail = candidate.Email;
-      console.log(candidate.Email);
 
+      // Envoyer l'e-mail à chaque candidat sélectionné
       emailjs
         .send(
           "service_vuhzias", // Remplacez par votre service ID EmailJS
@@ -62,29 +97,10 @@ const CandidatP = () => {
             error
           );
         });
-    });
+    });   
+     setOpenDialog(false); // Close the dialog after sending emails
+
   };
-  const handleSend = async () => {
-    const formData = new FormData();
-    Array.from(cvFiles).forEach((file) => {
-      formData.append("cvFiles", file);
-    });
-
-    try {
-      const response = await fetch("http://localhost:5000/predict", {
-        method: "POST",
-        body: formData,
-      });
-      let data = await response.json();
-      console.log(data);
-
-      data = data.map((item, index) => ({ ...item, id: index + 1 }));
-      setTableData(data);
-    } catch (error) {
-      console.error("Error sending files:", error);
-    }
-  };
-
   const columns = [
     //{ field: "id", headerName: "Numéro", minWidth: 70, flex: 1 },
     {
@@ -251,7 +267,7 @@ const CandidatP = () => {
           <Button
             variant="contained"
             color="primary"
-            onClick={sendEmailsToSelectedCandidates}
+            onClick={confirmSendEmails}
             sx={{ width: "auto", minWidth: "auto", ml: 3 }}
           >
             Envoyer E-mail
@@ -265,6 +281,28 @@ const CandidatP = () => {
           onSelectionModelChange={(ids) => setSelectedCandidateIds(ids)}
         />
       </Box>
+      {/* Confirmation Dialog */}
+      <Dialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirmer l'envoi d'e-mail"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Êtes-vous sûr de vouloir envoyer des e-mails aux candidats sélectionnés ?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)} color="primary">
+            Annuler
+          </Button>
+          <Button onClick={sendEmailsToSelectedCandidates} color="primary" autoFocus>
+            Confirmer
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
