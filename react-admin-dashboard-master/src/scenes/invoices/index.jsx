@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Button, TextField, useTheme, Dialog,
+import { Box, Typography, Button, TextField, useTheme, Dialog,Snackbar,
+  Alert,
   DialogActions,
   DialogContent,
   DialogContentText,
@@ -13,25 +14,28 @@ import Header from "../../components/Header";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useNavigate } from "react-router-dom";
 import emailjs from "emailjs-com"; // Importer emailjs-com
-
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 const CandidatP = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [cvFiles, setCvFiles] = useState([]);
   const [tableData, setTableData] = useState([]);
+  const MySwal = withReactContent(Swal);
   const [selectedCandidateIds, setSelectedCandidateIds] = useState([]);
-  const sortedData = [...tableData].sort((a, b) => b.predict_proba - a.predict_proba);
-  const validCandidats = sortedData.filter((candidat) => candidat.predict_statut === "Validé");
+  const sortedDataP = [...tableData].sort((a, b) => b.predict_proba - a.predict_proba);
+  const validCandidats = sortedDataP.filter((candidat) => candidat.predict_statut === "Validé");
   const validCandidatIds = validCandidats.map((candidat) => candidat.id);
   const [openDialog, setOpenDialog] = useState(false); // State for controlling dialog visibility
-
+  const [openSnackbar, setOpenSnackbar] = useState(false); // State for controlling snackbar visibility
+  const [snackbarMessage, setSnackbarMessage] = useState(""); // State for snackbar message
 
   useEffect(() => {
     // Charger les données depuis localStorage
-    const storedData = localStorage.getItem("tableData");
-    if (storedData) {
-      setTableData(JSON.parse(storedData));
+    const storedDataP = localStorage.getItem("tableData");
+    if (storedDataP) {
+      setTableData(JSON.parse(storedDataP));
     }
   }, []);
 
@@ -45,9 +49,7 @@ const CandidatP = () => {
     const files = event.target.files;
     setCvFiles(files);
   };
-  const confirmSendEmails = () => {
-    setOpenDialog(true); // Open the dialog to confirm email sending
-  };
+ 
   const handleSend = async () => {
     const formData = new FormData();
     Array.from(cvFiles).forEach((file) => {
@@ -70,6 +72,23 @@ const CandidatP = () => {
       console.error("Error sending files:", error);
     }
   };
+  const confirmSendEmails = () => {
+    MySwal.fire({
+      title: 'Confirmer l\'envoi d\'e-mail',
+      text: 'Êtes-vous sûr de vouloir envoyer des e-mails aux candidats sélectionnés ?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Oui, envoyer !',
+      cancelButtonText: 'Annuler'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        sendEmailsToSelectedCandidates();
+      }
+    });
+  };
+
   const sendEmailsToSelectedCandidates = () => {
     validCandidatIds.forEach((candidateId) => {
       const candidate = tableData.find((item) => item.id === candidateId);
@@ -88,6 +107,8 @@ const CandidatP = () => {
         )
         .then((response) => {
           console.log("E-mail envoyé avec succès à", candidateEmail);
+          setSnackbarMessage(`E-mail envoyé avec succès à ${candidateEmail}`);
+          setOpenSnackbar(true);
         })
         .catch((error) => {
           console.error(
@@ -96,6 +117,8 @@ const CandidatP = () => {
             ":",
             error
           );
+          setSnackbarMessage(`Erreur lors de l'envoi de l'e-mail à ${candidateEmail}`);
+          setOpenSnackbar(true);
         });
     });   
      setOpenDialog(false); // Close the dialog after sending emails
@@ -105,17 +128,23 @@ const CandidatP = () => {
     //{ field: "id", headerName: "Numéro", minWidth: 70, flex: 1 },
     {
       field: "Images",
-      headerName: "Image",
-      minWidth: 150,
+      headerName: "Images",
+      minWidth: 70,
       flex: 1,
-      renderCell: (params) => (
-        <Box
-          component="img"
-          sx={{ height: 50, width: 50, borderRadius: "50%" }}
-          alt={params.row.Email}
-          src={params.row.Images}
-        />
-      ),
+      renderCell: ({ row }) => {
+        return (
+          <Box display="flex" alignItems="center" justifyContent="flex-start">
+            {row.Texte_CV?.Images.map((image, index) => (
+              <img
+                key={index}
+                src={`http://localhost:5000/images/${image}`}
+                alt={`Image ${index}`}
+                style={{ width: 50, height: 50, marginRight: 5 }}
+              />
+            ))}
+          </Box>
+        );
+      },
     },
     {
       field: "Email",
@@ -275,7 +304,7 @@ const CandidatP = () => {
         </Box>
         <DataGrid
           checkboxSelection
-          rows={sortedData}
+          rows={sortedDataP}
           columns={columns}
           selectionModel={validCandidatIds}
           onSelectionModelChange={(ids) => setSelectedCandidateIds(ids)}
@@ -303,6 +332,16 @@ const CandidatP = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      {/* Success Snackbar */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackbar(false)}
+      >
+        <Alert onClose={() => setOpenSnackbar(false)} severity="success" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

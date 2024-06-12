@@ -5,11 +5,8 @@ import {
   Button,
   TextField,
   useTheme,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle
+  Snackbar,
+  Alert
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -19,17 +16,21 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import Header from "../../components/Header";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import emailjs from "emailjs-com"; // Importer emailjs-com
+import emailjs from "emailjs-com";
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 const Candidat = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const MySwal = withReactContent(Swal);
   const [cvFiles, setCvFiles] = useState([]);
   const [descriptionFile, setDescriptionFile] = useState(null);
   const [tableData, setTableData] = useState([]);
   const [interviewCount, setInterviewCount] = useState(0);
   const [selectedCandidateIds, setSelectedCandidateIds] = useState([]);
-  const [openDialog, setOpenDialog] = useState(false); // State for controlling dialog visibility
+  const [openSnackbar, setOpenSnackbar] = useState(false); // State for controlling snackbar visibility
+  const [snackbarMessage, setSnackbarMessage] = useState(""); // State for snackbar message
   const sortedData = [...tableData].sort((a, b) => b.Score - a.Score);
   const validCandidats = sortedData.filter(
     (candidat) =>
@@ -37,13 +38,6 @@ const Candidat = () => {
   );
   const validCandidatIds = validCandidats.map((candidat) => candidat.id);
   const location = useLocation();
-
-  useEffect(() => {
-    const storedData = localStorage.getItem("tableData");
-    if (storedData) {
-      setTableData(JSON.parse(storedData));
-    }
-  }, []);
 
   useEffect(() => {
     const storedData = localStorage.getItem("tableData");
@@ -90,7 +84,20 @@ const Candidat = () => {
   };
 
   const confirmSendEmails = () => {
-    setOpenDialog(true); // Open the dialog to confirm email sending
+    MySwal.fire({
+      title: 'Confirmer l\'envoi d\'e-mail',
+      text: 'Êtes-vous sûr de vouloir envoyer des e-mails aux candidats sélectionnés ?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Oui, envoyer !',
+      cancelButtonText: 'Annuler'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleSendEmails();
+      }
+    });
   };
 
   const handleSendEmails = () => {
@@ -110,6 +117,8 @@ const Candidat = () => {
         )
         .then((response) => {
           console.log("E-mail envoyé avec succès à", candidateEmail);
+          setSnackbarMessage(`E-mail envoyé avec succès à ${candidateEmail}`);
+          setOpenSnackbar(true);
         })
         .catch((error) => {
           console.error(
@@ -118,9 +127,10 @@ const Candidat = () => {
             ":",
             error
           );
+          setSnackbarMessage(`Erreur lors de l'envoi de l'e-mail à ${candidateEmail}`);
+          setOpenSnackbar(true);
         });
     });
-    setOpenDialog(false); // Close the dialog after sending emails
   };
 
   const handleSend = async () => {
@@ -137,7 +147,8 @@ const Candidat = () => {
       });
       let data = await response.json();
       console.log(data);
-
+      
+    
       // Ajouter un champ `id` incrémental à chaque ligne
       data = data.map((item, index) => ({ ...item, id: index + 1 }));
 
@@ -156,24 +167,25 @@ const Candidat = () => {
   };
 
   const columns = [
-    //{ field: "id", headerName: "Numéro", minWidth: 70, flex: 1 },
     {
       field: "Images",
-      headerName: "Image",
-      minWidth: 150,
+      headerName: "Images",
+      minWidth: 70,
       flex: 1,
-      renderCell: (params) => (
-        <Box
-          component="img"
-          sx={{
-            height: 50,
-            width: 50,
-            borderRadius: "50%",
-          }}
-          alt={params.row.Email}
-          src={params.row.Images[0]}
-        />
-      ),
+      renderCell: ({ row }) => {
+        return (
+          <Box display="flex" alignItems="center" justifyContent="flex-start">
+            {row.Texte_CV?.Images.map((image, index) => (
+              <img
+                key={index}
+                src={`http://localhost:5000/images/${image}`}
+                alt={`Image ${index}`}
+                style={{ width: 50, height: 50, marginRight: 5 }}
+              />
+            ))}
+          </Box>
+        );
+      },
     },
     {
       field: "Email",
@@ -199,8 +211,7 @@ const Candidat = () => {
       minWidth: 150,
       flex: 1,
       renderCell: ({ row }) => {
-        // Destructurer row pour accéder à Résultat
-        const { Résultat } = row; // Destructuring de Résultat depuis row
+        const { Résultat } = row;
 
         const getBackgroundColor = (Résultat) => {
           switch (Résultat) {
@@ -232,15 +243,15 @@ const Candidat = () => {
           <Box
             width="100%"
             m="0 auto"
-            p="2px"
+            p="5px"
             display="flex"
-            justifyContent="center"
             alignItems="center"
+            justifyContent="center"
+            borderRadius="4px"
             backgroundColor={getBackgroundColor(Résultat)}
-            borderRadius="2px"
           >
             {getIcon(Résultat)}
-            <Typography color={colors.grey[100]} sx={{ ml: "2px" }}>
+            <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
               {Résultat}
             </Typography>
           </Box>
@@ -248,25 +259,28 @@ const Candidat = () => {
       },
     },
     {
-      field: "details",
-      headerName: "Détails",
-      minWidth: 120,
+      field: "Details",
+      headerName: "Details",
+      minWidth: 100,
       flex: 1,
-      renderCell: (params) => (
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => handleDetailsClick(params.row.id)}
-        >
-          Détails
-        </Button>
-      ),
+      renderCell: ({ row }) => {
+        return (
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            onClick={() => handleDetailsClick(row.id)}
+          >
+            Détails
+          </Button>
+        );
+      },
     },
   ];
 
   return (
     <Box m="20px">
-      <Header title="Candidatures" subtitle="Gérer les candidatures par poste" />
+      <Header title="Candidat" subtitle="Gérer les candidats par poste" />
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -408,28 +422,17 @@ const Candidat = () => {
         />
       </Box>
 
-      {/* Confirmation Dialog */}
-      <Dialog
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{"Confirmer l'envoi d'e-mail"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Êtes-vous sûr de vouloir envoyer des e-mails aux candidats sélectionnés ?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenDialog(false)} color="primary">
-            Annuler
-          </Button>
-          <Button onClick={handleSendEmails} color="primary" autoFocus>
-            Confirmer
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <Snackbar
+  open={openSnackbar}
+  autoHideDuration={6000}
+  onClose={() => setOpenSnackbar(false)}
+  anchorOrigin={{ vertical: 'top', horizontal: 'right' }} // Positionner l'alerte en haut à droite
+>
+  <Alert onClose={() => setOpenSnackbar(false)} severity="success" sx={{ width: '100%' }}>
+    {snackbarMessage}
+  </Alert>
+</Snackbar>
+
     </Box>
   );
 };

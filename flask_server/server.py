@@ -265,7 +265,8 @@ def upload_files():
                     'Diplôme': cv_info.get('Diplôme', 'N/A'),
                     'Langues': cv_info.get('Langues', 'N/A'),
                     'Compétences': cv_info.get('Compétences', 'N/A'),
-                    'Images': [f"{request.host_url}{app.config['EXTRACTED_IMAGES_FOLDER']}/{image}" for image in cv_info['Images']],
+                    'Texte_CV': cv_info,
+                    #'Images': [f"{request.host_url}{app.config['EXTRACTED_IMAGES_FOLDER']}/{image}" for image in cv_info['Images']],
                     'Description_Poste': job_description_text,
                     'Résultat': result,
                     'Score': score,
@@ -317,7 +318,8 @@ def upload_cv():
                     'Diplôme': cv_info.get('Diplôme', 'N/A'),
                     'Langues': cv_info.get('Langues', 'N/A'),
                     'Compétences': cv_info.get('Compétences', 'N/A'),
-                    'Images': [f"{request.host_url}{app.config['EXTRACTED_IMAGES_FOLDER']}/{image}" for image in cv_info['Images']],
+                    'Texte_CV': cv_info,
+                    #'Images': [f"{request.host_url}{app.config['EXTRACTED_IMAGES_FOLDER']}/{image}" for image in cv_info['Images']],
                     'predict_statut': predict_statut,
                     'predict_proba': round(max_proba, 2),  # Arrondir la probabilité maximale à deux décimales
                 }
