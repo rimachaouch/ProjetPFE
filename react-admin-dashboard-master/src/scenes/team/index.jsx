@@ -4,21 +4,21 @@ import {
   Typography,
   Button,
   TextField,
-  useTheme,
   Snackbar,
   Alert
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useLocation, useNavigate } from "react-router-dom";
-import { tokens } from "../../theme";
+import { useTheme } from '@mui/material/styles';
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CancelIcon from "@mui/icons-material/Cancel";
 import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
-import Header from "../../components/Header";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import emailjs from "emailjs-com";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import Header from "../../components/Header";
+import { tokens } from "../../theme";
 
 const Candidat = () => {
   const theme = useTheme();
@@ -29,8 +29,8 @@ const Candidat = () => {
   const [tableData, setTableData] = useState([]);
   const [interviewCount, setInterviewCount] = useState(0);
   const [selectedCandidateIds, setSelectedCandidateIds] = useState([]);
-  const [openSnackbar, setOpenSnackbar] = useState(false); // State for controlling snackbar visibility
-  const [snackbarMessage, setSnackbarMessage] = useState(""); // State for snackbar message
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
   const sortedData = [...tableData].sort((a, b) => b.Score - a.Score);
   const validCandidats = sortedData.filter(
     (candidat) =>
@@ -38,11 +38,16 @@ const Candidat = () => {
   );
   const validCandidatIds = validCandidats.map((candidat) => candidat.id);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedData = localStorage.getItem("tableData");
     if (storedData) {
       setTableData(JSON.parse(storedData));
+    }
+    const storedSelectedIds = localStorage.getItem("selectedCandidateIds");
+    if (storedSelectedIds) {
+      setSelectedCandidateIds(JSON.parse(storedSelectedIds));
     }
   }, []);
 
@@ -52,6 +57,7 @@ const Candidat = () => {
         const response = await fetch("http://localhost:5000/compare");
         const data = await response.json();
         setTableData(data);
+        localStorage.setItem("tableData", JSON.stringify(data));
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -62,7 +68,9 @@ const Candidat = () => {
     }
   }, [location.pathname]);
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    localStorage.setItem("selectedCandidateIds", JSON.stringify(selectedCandidateIds));
+  }, [selectedCandidateIds]);
 
   const handleDetailsClick = (id) => {
     const candidate = tableData.find((item) => item.id === id);
@@ -107,13 +115,12 @@ const Candidat = () => {
 
       emailjs
         .send(
-          "service_vuhzias", // Remplacez par votre service ID EmailJS
-          "template_mzdnsar", // Remplacez par votre template ID EmailJS
+          "service_vuhzias",
+          "template_mzdnsar",
           {
             to_email: candidateEmail,
-            // Ajoutez d'autres variables du modèle d'e-mail si nécessaire
           },
-          "eSkEu69BRALYkpPLM" // Remplacez par votre user ID EmailJS
+          "eSkEu69BRALYkpPLM"
         )
         .then((response) => {
           console.log("E-mail envoyé avec succès à", candidateEmail);
@@ -147,14 +154,11 @@ const Candidat = () => {
       });
       let data = await response.json();
       console.log(data);
-      
-    
-      // Ajouter un champ `id` incrémental à chaque ligne
+
       data = data.map((item, index) => ({ ...item, id: index + 1 }));
 
       data.sort((a, b) => b.Score - a.Score);
 
-      // Sélectionner uniquement le candidat avec le score le plus élevé
       setSelectedCandidateIds(
         data.slice(0, interviewCount > 0 ? 1 : 0).map((candidate) => candidate.id)
       );
@@ -410,12 +414,9 @@ const Candidat = () => {
           columns={columns}
           selectionModel={selectedCandidateIds}
           onSelectionModelChange={(ids) => {
-            // Limiter le nombre de candidats sélectionnés au nombre d'interviews spécifié
             if (ids.length <= interviewCount) {
               setSelectedCandidateIds(ids);
             } else {
-              // Si le nombre de candidats sélectionnés dépasse le nombre d'interviews,
-              // ne sélectionner que les premiers candidats valides jusqu'au nombre spécifié
               setSelectedCandidateIds(ids.slice(0, interviewCount));
             }
           }}
@@ -423,16 +424,15 @@ const Candidat = () => {
       </Box>
 
       <Snackbar
-  open={openSnackbar}
-  autoHideDuration={6000}
-  onClose={() => setOpenSnackbar(false)}
-  anchorOrigin={{ vertical: 'top', horizontal: 'right' }} // Positionner l'alerte en haut à droite
->
-  <Alert onClose={() => setOpenSnackbar(false)} severity="success" sx={{ width: '100%' }}>
-    {snackbarMessage}
-  </Alert>
-</Snackbar>
-
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert onClose={() => setOpenSnackbar(false)} severity="success" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

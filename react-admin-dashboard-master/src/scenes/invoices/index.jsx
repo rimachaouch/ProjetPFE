@@ -21,10 +21,10 @@ const CandidatP = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [cvFiles, setCvFiles] = useState([]);
-  const [tableData, setTableData] = useState([]);
+  const [tableDataP, setTableDataP] = useState([]);
   const MySwal = withReactContent(Swal);
   const [selectedCandidateIds, setSelectedCandidateIds] = useState([]);
-  const sortedDataP = [...tableData].sort((a, b) => b.predict_proba - a.predict_proba);
+  const sortedDataP = [...tableDataP].sort((a, b) => b.predict_proba - a.predict_proba);
   const validCandidats = sortedDataP.filter((candidat) => candidat.predict_statut === "Validé");
   const validCandidatIds = validCandidats.map((candidat) => candidat.id);
   const [openDialog, setOpenDialog] = useState(false); // State for controlling dialog visibility
@@ -33,15 +33,15 @@ const CandidatP = () => {
 
   useEffect(() => {
     // Charger les données depuis localStorage
-    const storedDataP = localStorage.getItem("tableData");
+    const storedDataP = localStorage.getItem("tableDataP");
     if (storedDataP) {
-      setTableData(JSON.parse(storedDataP));
+      setTableDataP(JSON.parse(storedDataP));
     }
   }, []);
 
   const navigate = useNavigate();
   const handleDetailsClick = (id) => {
-    const candidate = tableData.find((item) => item.id === id);
+    const candidate = tableDataP.find((item) => item.id === id);
     navigate(`/ProfileP/${id}`, { state: { candidate } });
   };
 
@@ -65,8 +65,8 @@ const CandidatP = () => {
       console.log(data);
 
       data = data.map((item, index) => ({ ...item, id: index + 1 }));
-      setTableData(data);
-      localStorage.setItem("tableData", JSON.stringify(data));
+      setTableDataP(data);
+      localStorage.setItem("tableDataP", JSON.stringify(data));
 
     } catch (error) {
       console.error("Error sending files:", error);
@@ -91,7 +91,7 @@ const CandidatP = () => {
 
   const sendEmailsToSelectedCandidates = () => {
     validCandidatIds.forEach((candidateId) => {
-      const candidate = tableData.find((item) => item.id === candidateId);
+      const candidate = tableDataP.find((item) => item.id === candidateId);
       const candidateEmail = candidate.Email;
 
       // Envoyer l'e-mail à chaque candidat sélectionné
