@@ -1,21 +1,25 @@
 import { useState } from "react";
-import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
+import { ProSidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
-import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
-import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
-import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
-import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
-import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutlined";
-import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
+
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
-import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+
+import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
+import GroupAddOutlinedIcon from "@mui/icons-material/GroupAddOutlined";
+import ReportOutlinedIcon from "@mui/icons-material/ReportOutlined";
+import PostAddOutlinedIcon from "@mui/icons-material/PostAdd";
+import HowToRegOutlinedIcon from "@mui/icons-material/HowToReg";
+import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
+
+import FindInPageOutlinedIcon from "@mui/icons-material/FindInPageOutlined";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp"; // Nouvelle icône pour Global
+import CompareArrowsIcon from "@mui/icons-material/CompareArrows"; // Nouvelle icône pour Entrées Sorties
+import PlaylistAddCheckIcon from "@mui/icons-material/PlaylistAddCheck";
+
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -46,7 +50,9 @@ const Sidebar = () => {
       sx={{
         "& .pro-sidebar-inner": {
           background: `${colors.primary[400]} !important`,
+          width: isCollapsed ? "120px" : "280px",
         },
+
         "& .pro-icon-wrapper": {
           backgroundColor: "transparent !important",
         },
@@ -54,10 +60,10 @@ const Sidebar = () => {
           padding: "5px 35px 5px 20px !important",
         },
         "& .pro-inner-item:hover": {
-          color: "#868dfb !important",
+          color: "#db4059 !important",
         },
         "& .pro-menu-item.active": {
-          color: "#6870fa !important",
+          color: "#c30010 !important",
         },
       }}
     >
@@ -106,107 +112,114 @@ const Sidebar = () => {
           )}
 
           <Box paddingLeft={isCollapsed ? undefined : "10%"}>
-            <Item
-              title="Dashboard"
+
+          <Item
+              title="Accueil"
               to="/"
               icon={<HomeOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
-
             <Typography
-              variant="h6"
+              variant="h5"
               color={colors.grey[300]}
               sx={{ m: "15px 0 5px 20px" }}
             >
-              Data
+              Dashboard
             </Typography>
             <Item
-              title="Manage Team"
-              to="/team"
-              icon={<PeopleOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Contacts Information"
-              to="/contacts"
-              icon={<ContactsOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Invoices Balances"
-              to="/invoices"
-              icon={<ReceiptOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
+                title="Global"
+                to="/DashboardGlobal"
+                icon={<TrendingUpIcon />} 
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Entrées Sorties"
+                to="/EntréesSorties"
+                icon={<CompareArrowsIcon />} 
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Demandes Personnelles"
+                to="/Demandes"
+                icon={<PlaylistAddCheckIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Postes"
+                to="/Postes"
+                icon={<PostAddOutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Candidatures"
+                to="/Candidatures"
+                icon={<AssignmentOutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Candidats"
+                to="/Candidats"
+                icon={<GroupAddOutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+               <SubMenu
+                title="Rapports détaillés"
+                icon={<ReportOutlinedIcon />}
+                style={{
+                  color: colors.grey[100],
+                }}
+              >
+                <Item
+                  title="Postes"
+                  to="/PostesR"
+                  icon={<PostAddOutlinedIcon />}
+                  selected={selected}
+                  setSelected={setSelected}
+                />
+                <Item
+                  title="Candidats"
+                  to="/CandidatsR"
+                  icon={<HowToRegOutlinedIcon />}
+                  selected={selected}
+                  setSelected={setSelected}
+                />
+                <Item
+                  title="Employés"
+                  to="/Employes"
+                  icon={<GroupOutlinedIcon />}
+                  selected={selected}
+                  setSelected={setSelected}
+                />
+              </SubMenu>
 
             <Typography
-              variant="h6"
+              variant="h5"
               color={colors.grey[300]}
               sx={{ m: "15px 0 5px 20px" }}
             >
-              Pages
+              Gérer les Candidatures
             </Typography>
             <Item
-              title="Profile Form"
-              to="/form"
-              icon={<PersonOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Calendar"
-              to="/calendar"
-              icon={<CalendarTodayOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="FAQ Page"
-              to="/faq"
-              icon={<HelpOutlineOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-
-            <Typography
-              variant="h6"
-              color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 20px" }}
-            >
-              Charts
-            </Typography>
-            <Item
-              title="Bar Chart"
-              to="/bar"
-              icon={<BarChartOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Pie Chart"
-              to="/pie"
-              icon={<PieChartOutlineOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Line Chart"
-              to="/line"
-              icon={<TimelineOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Geography Chart"
-              to="/geography"
-              icon={<MapOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
+                title="Par Postes"
+               to="/candidat"
+                icon={<FindInPageOutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Spontanées"
+               to="/candidatP"
+                icon={<GroupAddOutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
           </Box>
         </Menu>
       </ProSidebar>
