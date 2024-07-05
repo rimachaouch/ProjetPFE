@@ -9,43 +9,51 @@ import Contacts from "./scenes/contacts";
 import Profile from "./scenes/Profile";
 import ProfileP from "./scenes/ProfileP";
 import DashboardGlobal from "./scenes/DashboardGlobal";
-import Login from "./scenes/login";
+import Login from "./scenes/Login";
 
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 import Candidatures from "./scenes/Candidatures";
 import Postes from "./scenes/Postes";
+import SignUP from "./scenes/Signup";
+
 import EntréesSorties from "./scenes/EntréesSorties";
 import Candidats from "./scenes/Candidats";
 import Demandes from "./scenes/Demandes";
 import Employes from "./scenes/Rapports/Employes";
 import CandidatsR from "./scenes/Rapports/CandidatsR";
 import PostesR from "./scenes/Rapports/PostesR";
+
 function App() {
   const [theme, colorMode] = useMode();
-  const [isSidebar, setIsSidebar] = useState(true);
-  const [isTopbar, setIsTopbar] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // État pour suivre la connexion
+  const [isSidebarLogin, setIsSidebarLogin] = useState(true);
+  const [isTopbarLogin, setIsTopbarLogin] = useState(true);
+ 
   const location = useLocation();
-
-  useEffect(() => {
-    // Mise à jour des barres de navigation en fonction de la page actuelle
-    const isLoginPage = location.pathname === '/login';
-    setIsSidebar(!isLoginPage);
-    setIsTopbar(!isLoginPage);
+ 
+ 
+  // Set isSidebar to false if the current path is '/login', otherwise set it to true
+  useState(() => {
+    setIsSidebarLogin(location.pathname !== '/login' && location.pathname !== '/signup');
+    setIsTopbarLogin(location.pathname !== '/login' && location.pathname !== '/signup');
+   
+ 
+   
+ 
   }, [location.pathname]);
-
+ 
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <div className="app">
-          {isSidebar && <Sidebar />}
+          {isSidebarLogin && <Sidebar />}
+       
           <main className="content">
-            {isTopbar && <Topbar setIsSidebar={setIsSidebar} />}
+            {isTopbarLogin && <Topbar setIsSidebarLogin={setIsSidebarLogin} />}
             <Routes>
               <Route path="/" element={<Accueil />} />
-              <Route path="/login" element={<Login onLogin={setIsLoggedIn} />} />
+              <Route path="/Login" element={<Login />} />
               <Route path="/candidat" element={<Candidat />} />
               <Route path="/Candidats" element={<Candidats />} />
               <Route path="/contacts" element={<Contacts />} />
@@ -58,6 +66,8 @@ function App() {
               <Route path="/PostesR" element={<PostesR/>} />
               <Route path="/CandidatsR" element={<CandidatsR />} />
               <Route path="/Employes" element={<Employes/>} />
+              <Route path="/Signup" element={<SignUP/>} />
+
               <Route path="/ProfileP/:id" element={<ProfileP />} />
               <Route path="/Profile/:id" element={<Profile />} />
             </Routes>

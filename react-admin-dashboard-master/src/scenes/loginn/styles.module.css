@@ -1,14 +1,14 @@
 .login_container {
-    width: 100%;
+    width: 150%;
     min-height: 100vh;
-    background-image: url('https://i.pinimg.com/originals/ef/81/14/ef81144dc32630b24b717de204691df9.jpg');
+    background-image: url('https://lvdneng.rosselcdn.net/sites/default/files/dpistyles_v2/vdn_864w/2022/05/07/node_1176153/55336605/public/2022/05/07/B9730820700Z.1_20220507112838_000%2BG57KEE272.2-0.jpg?itok=zC_os7pp1652100085');
     display: flex;
     align-items: center;
     justify-content: center;
 }
  
 .login_form_container {
-    width: 900px;
+    width: 400px;
     height: 500px;
     display: flex;
     border-radius: 10px;
@@ -105,7 +105,7 @@
   }
  
   .sopra_logo {
-    width: 170px;
-    height: 170px;
+    width: 120px;
+    height: 120px;
     border-radius: 20%;
   }
