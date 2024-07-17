@@ -7,13 +7,3 @@ content-type: application/json
     "idManager":10,
     "numberOfParties":3
 }
-
-###
-post http://localhost:3000/auth/UpdatePlateau
-content-type: application/json
-
-{
-   "plateauId":2,
-    "idManager":10,
-    "numberOfParties":3
-}

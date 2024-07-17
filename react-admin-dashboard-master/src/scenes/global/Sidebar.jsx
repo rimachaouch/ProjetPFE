@@ -7,6 +7,9 @@ import { tokens } from "../../theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import EventNoteIcon from "@mui/icons-material/EventNote"; // Icône pour Absence
+import WorkOutlineIcon from "@mui/icons-material/WorkOutline"; // Icône pour Recrutement
+import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline"; // Icône pour Ressources Humaines
 
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import GroupAddOutlinedIcon from "@mui/icons-material/GroupAddOutlined";
@@ -44,21 +47,24 @@ const Sidebar = () => {
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
+  const userInfo = JSON.parse(localStorage.getItem("user"));
 
+  const userRole = userInfo?.role;
+  console.log("role",userInfo)
   return (
     <Box
       sx={{
         "& .pro-sidebar-inner": {
           background: `${colors.primary[400]} !important`,
-          width: isCollapsed ? "120px" : "280px",
+          width: isCollapsed ? "100px" : "230px",
         },
 
         "& .pro-icon-wrapper": {
           backgroundColor: "transparent !important",
         },
         "& .pro-inner-item": {
-          padding: "5px 35px 5px 20px !important",
-        },
+ padding: "3px 5px !important", // Ajustement du padding    
+     },
         "& .pro-inner-item:hover": {
           color: "#db4059 !important",
         },
@@ -130,7 +136,15 @@ const Sidebar = () => {
             <Item
                 title="Global"
                 to="/DashboardGlobal"
-                icon={<TrendingUpIcon />} 
+  icon={<PeopleOutlineIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              
+            <Item
+                title="Absence"
+                to="/Absence"
+                icon={<EventNoteIcon />}
                 selected={selected}
                 setSelected={setSelected}
               />
@@ -138,6 +152,13 @@ const Sidebar = () => {
                 title="Entrées Sorties"
                 to="/EntréesSorties"
                 icon={<CompareArrowsIcon />} 
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Recrutement"
+                to="/Recrutement"
+                icon={<WorkOutlineIcon />}
                 selected={selected}
                 setSelected={setSelected}
               />

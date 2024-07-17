@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import styles from "./styles.module.css";
-import image_user from"./SopraLogo.png"
+
 const Signup = () => {
   const [data, setData] = useState({
     UserName: "",
@@ -70,7 +70,9 @@ console.log(data.selectedImage)
         <div className={styles.right}>
           <div className={styles.scrollable_form}>
             <form className={styles.form_container} onSubmit={handleSubmit}>
-              <h1 style={{ color: "#5e01b5" }}>New Account</h1>
+              
+              <h1 style={{ color: "#db4059" }}>New Account</h1>
+
               <div className={styles.image_input_container}>
                 
                 <div className={styles.input_container}>
@@ -111,7 +113,7 @@ console.log(data.selectedImage)
                 required
                 className={styles.input}
               >
-               
+               <option value="" disabled>Role</option>
                 <option value="responsable_rh">Responable RH</option>
                 <option value="recruteur">Recruteur</option>
               </select>

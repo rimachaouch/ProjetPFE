@@ -10,13 +10,13 @@ import Profile from "./scenes/Profile";
 import ProfileP from "./scenes/ProfileP";
 import DashboardGlobal from "./scenes/DashboardGlobal";
 import Login from "./scenes/Login";
-
+import Absence  from "./scenes/Absence";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 import Candidatures from "./scenes/Candidatures";
 import Postes from "./scenes/Postes";
-import SignUP from "./scenes/Signup";
-
+import Signup from "./scenes/Signup";
+import Recrutement from "./scenes/Recrutement";
 import EntréesSorties from "./scenes/EntréesSorties";
 import Candidats from "./scenes/Candidats";
 import Demandes from "./scenes/Demandes";
@@ -28,7 +28,8 @@ function App() {
   const [theme, colorMode] = useMode();
   const [isSidebarLogin, setIsSidebarLogin] = useState(true);
   const [isTopbarLogin, setIsTopbarLogin] = useState(true);
- 
+  const [userRole, setUserRole] = useState(null); // État pour stocker le rôle de l'utilisateur
+
   const location = useLocation();
  
  
@@ -36,10 +37,11 @@ function App() {
   useState(() => {
     setIsSidebarLogin(location.pathname !== '/login' && location.pathname !== '/signup');
     setIsTopbarLogin(location.pathname !== '/login' && location.pathname !== '/signup');
-   
- 
-   
- 
+    // Récupérer le rôle de l'utilisateur à partir du localStorage
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+      setUserRole(user.role);
+    }
   }, [location.pathname]);
  
   return (
@@ -66,8 +68,10 @@ function App() {
               <Route path="/PostesR" element={<PostesR/>} />
               <Route path="/CandidatsR" element={<CandidatsR />} />
               <Route path="/Employes" element={<Employes/>} />
-              <Route path="/Signup" element={<SignUP/>} />
+              <Route path="/Recrutement" element={<Recrutement/>} />
 
+              <Route path="/Signup" element={<Signup/>} />
+              {userRole === 'responsable_rh' && <Route path="/Absence" element={<Absence />} />}
               <Route path="/ProfileP/:id" element={<ProfileP />} />
               <Route path="/Profile/:id" element={<Profile />} />
             </Routes>

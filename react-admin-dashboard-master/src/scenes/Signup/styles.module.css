@@ -1,7 +1,7 @@
 .signup_container {
     width: 100%;
     min-height: 100vh;
-    background-image: url('https://i.pinimg.com/originals/ef/81/14/ef81144dc32630b24b717de204691df9.jpg');
+    background-image: url('background.JPG');
     background-repeat: no-repeat;
     background-size: cover;
     display: flex;

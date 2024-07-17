@@ -1,35 +1,30 @@
+import React from "react";
 import { Box, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
 
-const  DasboardGloabal = () => {
+const DashboardGlobal = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const Header = ({ subtitle }) => {
-    return (
-      <Typography variant="h4" component="h2" sx={{ fontWeight: 'bold', color: 'black' }}>
-        {subtitle}
-      </Typography>
-    );
-  }
+
   return (
-    <Box m="20px">
+    <Box >
       {/* HEADER */}
-      <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Header subtitle="Vue globale de recrutement de l'années courante"/>
+      <Box display="flex" justifyContent="center" alignItems="center" mb="20px">
+        <Typography variant="h3" >
+          Vue globale de ressource humaine
+        </Typography>
       </Box>
 
-      {/* VIDEO SECTION */}
-      <Box mt="20px">
-        <Typography variant="h6" color={colors.grey[100]} gutterBottom>
-         
-        </Typography>
-        <Box display="flex" justifyContent="center">
-         
-        </Box>
+      {/* Contenu */}
+      <Box display="flex" justifyContent="center" mt="5px">
+        <iframe
+        src="http://localhost:4848/single/?appid=C%3A%5CUsers%5Crchaouch%5CDocuments%5CQlik%5CSense%5CApps%5CRim_Chaouch_UI(1)(2).qvf&sheet=27831597-b93a-4e4e-a30e-a9226368ad6f&theme=card&opt=ctxmenu"
+          style={{ border: "none", width: "950px", height: "500px" }}
+        ></iframe>
       </Box>
     </Box>
   );
 };
 
-export default DasboardGloabal;
+export default DashboardGlobal;

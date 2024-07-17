@@ -51,15 +51,11 @@ def extract_information_from_pdf(resume_path):
     try:
         parser = ResumeParser(resume_path)
         data = parser.get_extracted_data()
-
         education_info = extract_education(resume_path)
         languages = extract_languages(resume_path)
-
         with open(resume_path, 'rb') as pdf_file:
             images = extract_images_from_pdf(pdf_file.read())
-
         phone_number = extract_telephone_numbers(resume_path)
-
         cv_info = {
             'Email': data.get('email', 'N/A'),
             'Tel': phone_number,
@@ -70,7 +66,6 @@ def extract_information_from_pdf(resume_path):
             'Compétences': ', '.join(data.get('skills', [])),
             'Images': images
         }
-
         return cv_info
     except Exception as e:
         print("Une erreur s'est produite lors de l'extraction des informations du CV :", str(e))
@@ -144,19 +139,15 @@ def extract_languages(pdf_path):
 def calculate_similarity(resume_text, job_description):
     resume_tokens = word_tokenize(resume_text, language='french')
     job_tokens = word_tokenize(job_description, language='french')
-
     stop_words = set(stopwords.words('french'))
     filtered_resume_tokens = [word for word in resume_tokens if word.lower() not in stop_words]
     filtered_job_tokens = [word for word in job_tokens if word.lower() not in stop_words]
-
     filtered_resume = ' '.join(filtered_resume_tokens)
     filtered_job = ' '.join(filtered_job_tokens)
-
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform([filtered_resume, filtered_job])
     cosine_sim = cosine_similarity(tfidf_matrix[0], tfidf_matrix[1])
     return cosine_sim[0][0]
-
 # Fonction pour matcher le CV à la description de poste
 def match_resume_to_job(resume_content, job_description, expert_threshold=80, medium_threshold=60):
     similarity_score = calculate_similarity(resume_content, job_description)

@@ -5,12 +5,12 @@ import { connectionConfig } from "../../../dbConfig.js";
 const { Pool } = pkg;
 const pool = new Pool(connectionConfig);
 //S
-export const createUser = async (username, email, password, role, imageUrl) => {
+export const createUser = async (username, email, password, role) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const res = await pool.query(
-    "INSERT INTO users (username, email, password,role,image_url) VALUES ($1, $2, $3,$4,$5) RETURNING id",
-    [username, email, hashedPassword, role, imageUrl]
+    "INSERT INTO users (username, email, password,role) VALUES ($1, $2, $3, $4 ) RETURNING id",
+    [username, email, hashedPassword, role]
   );
   return res.rows[0];
 };
@@ -69,7 +69,7 @@ export const updateUserr = async (req, res) => {
       return res.status(404).send({ error: "User not found" });
     }
 
-    if (!["ligne_manager", "admin", "manager", "employee"].includes(role)) {
+    if (!["responsable_rh", "recruteur"].includes(role)) {
       return res.status(400).send({ error: "Invalid role specified" });
     }
 
@@ -85,10 +85,10 @@ export const updateUserr = async (req, res) => {
       hashedPassword = await bcrypt.hash(password, 10);
     }
 
-    const image_url = req.file ? req.file.path : user.image_url; // Use existing image_url if file not provided
+   // Use existing image_url if file not provided
     const query = `
             UPDATE users
-            SET username = $1, email = $2, role = $3, password = $4, image_url = $5
+            SET username = $1, email = $2, role = $3, password = $4, 
             WHERE id = $6
             RETURNING *;
         `;
@@ -97,7 +97,6 @@ export const updateUserr = async (req, res) => {
       email,
       role,
       hashedPassword,
-      image_url,
       id,
     ]);
     console.log("Update Result:", updateResult);

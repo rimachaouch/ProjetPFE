@@ -1,0 +1,37 @@
+/* CSS for iframe */
+.iframe-container {
+    display: flex;
+    flex-direction: column;
+    height: 87vh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .header-container {
+    padding: 20px;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .iframe-section {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .iframe-wrapper {
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .fixed-height-iframe {
+    height: 500px; /* Fixed height for the iframe */
+    width: auto; /* Maintain aspect ratio */
+  }
+  

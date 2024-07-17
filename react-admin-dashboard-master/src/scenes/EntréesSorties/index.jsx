@@ -5,31 +5,26 @@ import Header from "../../components/Header";
 const  EntréesSorties = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const Header = ({ subtitle }) => {
+ 
     return (
-      <Typography variant="h4" component="h2" sx={{ fontWeight: 'bold', color: 'black' }}>
-        {subtitle}
-      </Typography>
-    );
-  }
-  return (
-    <Box m="20px">
-      {/* HEADER */}
-      <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Header subtitle="Analyse des Entrées Sorties"/>
-      </Box>
-
-      {/* VIDEO SECTION */}
-      <Box mt="20px">
-        <Typography variant="h6" color={colors.grey[100]} gutterBottom>
-         
-        </Typography>
-        <Box display="flex" justifyContent="center">
-         
+      <Box m="2px">
+        {/* HEADER */}
+        <Box display="flex" justifyContent="center" alignItems="center" mb="20px">
+          <Typography variant="h3" >
+            Analyse des Entrées Sorties
+          </Typography>
+        </Box>
+  
+        {/* Contenu */}
+        <Box display="flex" justifyContent="center" mt="5px">
+          <iframe
+          src="http://localhost:4848/single/?appid=C%3A%5CUsers%5Crchaouch%5CDocuments%5CQlik%5CSense%5CApps%5CRim_Chaouch_UI(1)(2).qvf&sheet=1f151d58-2391-4051-8964-bba1fd421a1f&theme=card&opt=ctxmenu"
+            style={{ border: "none", width: "950px", height: "500px" }}
+          ></iframe>
         </Box>
       </Box>
-    </Box>
-  );
-};
+    );
+  };
+
 
 export default EntréesSorties;

@@ -25,7 +25,8 @@ const Login = () => {
       const url = "http://localhost:3000/auth/login";
       const response = await axios.post(url, data);
       console.log( "mezen",response.data);
- 
+      localStorage.setItem("user", JSON.stringify(response.data));
+
       localStorage.setItem("token", JSON.stringify(response.data));
       console.log( JSON.parse(localStorage.getItem("token")).token);
      window.location = "/";
@@ -48,7 +49,7 @@ const Login = () => {
           <img src={sopraLogo} alt="Sopra" className={styles.sopra_logo} />
           <form className={styles.form_container} onSubmit={handleSubmit}>
             <br />
-            <h1 style={{ color: "#5e01b5" }}>Login</h1>
+
             <input
               type="email"
               placeholder="Email"
@@ -72,18 +73,11 @@ const Login = () => {
               Sign In
             </button>
           </form>
-          <Link to="/forgetPassword" className={styles.forget_password_link}>
-            Forget Password?
+          <Link to="/signup" className={styles.forget_password_link}>
+            Créer un compte
           </Link>
         </div>
-        <div className={styles.right}>
-          <h1>New Account</h1>
-          <Link to="/signup">
-            <button type="button" className={styles.white_btn}>
-              Sign Up
-            </button>
-          </Link>
-        </div>
+        
       </div>
     </div>
   );

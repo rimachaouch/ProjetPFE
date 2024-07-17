@@ -27,7 +27,7 @@ export const signup = async (req, res) => {
     console.log({ username, email, password, role });
 
     // Validate the role, if necessary
-    if (!["ligne_manager", "admin", "manager", "employee"].includes(role)) {
+    if (!["responsable_rh", "recruteur"].includes(role)) {
       return res.status(400).send({ error: "Invalid role specified" });
     }
 
@@ -35,10 +35,9 @@ export const signup = async (req, res) => {
     if (existingUser) {
       return res.status(409).send({ error: "User already exists" }); // 409 Conflict might be a suitable status code
     }
-    console.log("req file:", req.file);
-    const imageUrl = req.file ? req.file.path : null;
+   
 
-    const user = await createUser(username, email, password, role, imageUrl);
+    const user = await createUser(username, email, password, role);
     console.log(req.body.email);
 
     SendOTP({ body: { email: req.body.email } });
@@ -69,14 +68,9 @@ export const login = async (req, res) => {
       return res.status(401).send({ error: "Invalid credentials" });
     }
 
-    const is_verified = await pool.query(
-      "SELECT verified FROM users   WHERE email = $1",
-      [email]
-    );
+   
 
-    if (!is_verified.rows[0].verified) {
-      return res.status(403).send({ error: "Please verifie Your account" });
-    }
+   
 
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
       expiresIn: "5h",
@@ -354,7 +348,7 @@ export const updateUser = async (req, res) => {
     const user = await findUserById(id);
     if (!user) return res.status(404).send({ error: "User not found" });
 
-    if (!["ligne_manager", "admin", "manager", "employee"].includes(role))
+    if (!["responsable_rh", "recruteur"].includes(role))
       return res.status(400).send({ error: "Invalid role specified" });
 
     if (email && email !== user.email) {
