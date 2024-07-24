@@ -76,7 +76,10 @@ export const login = async (req, res) => {
       expiresIn: "5h",
     });
     const userID= user.id;
-    res.send({ token,userID });
+    const role = user.role;  // Ensure role is included in the response
+
+    res.send({ token, userID, role });
+    //res.send({ token,userID });
     console.log("jawna behy");
   } catch (error) {
     console.log(error);

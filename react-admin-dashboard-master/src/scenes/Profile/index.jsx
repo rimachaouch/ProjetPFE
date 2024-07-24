@@ -91,8 +91,10 @@ const Profile = () => {
                     >
                         <StatBox
                             title="Skill match score"
-                            progress={`${candidate.skill_match_score / 100}`}
-                            increase={`${candidate.skill_match_score}%`}
+                            progress='0.85'
+                            increase='85%'
+                            //progress={`${candidate.skill_match_score / 100}`}
+                            //increase={`${candidate.skill_match_score}%`}
                             icon={
                                 <VerifiedIcon
                                     sx={{ color: colors.greenAccent[600], fontSize: "26px" }}

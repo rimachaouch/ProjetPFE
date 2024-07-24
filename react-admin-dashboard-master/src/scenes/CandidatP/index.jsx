@@ -155,9 +155,13 @@ const CandidatP = () => {
       headerName: "Score",
       minWidth: 130,
       flex: 1,
+      renderCell: (params) => {
+        const formattedScore = `${Math.round(params.value)}%`;
+        return <Typography>{formattedScore}</Typography>;
     },
+  },
     {
-      field: "predict_statut",
+      field: "predict_statut" ,
       headerName: "Statut",
       minWidth: 120,
       flex: 1,

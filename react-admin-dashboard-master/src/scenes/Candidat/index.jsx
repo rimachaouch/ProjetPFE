@@ -19,6 +19,10 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import Header from "../../components/Header";
 import { tokens } from "../../theme";
+import StarIcon from "@mui/icons-material/Star";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import SchoolIcon from "@mui/icons-material/School";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
 const Candidat = () => {
   const theme = useTheme();
@@ -155,7 +159,12 @@ const Candidat = () => {
       let data = await response.json();
       console.log(data);
 
-      data = data.map((item, index) => ({ ...item, id: index + 1 }));
+        
+    data = data.map((item, index) => ({
+      ...item,
+      Score: item.Score ,
+      id: index + 1,
+    }));
 
       data.sort((a, b) => b.Score - a.Score);
 
@@ -202,6 +211,10 @@ const Candidat = () => {
       headerName: "Score",
       minWidth: 130,
       flex: 1,
+      renderCell: (params) => {
+        const formattedScore = `${Math.round(params.value)}%`;
+        return <Typography>{formattedScore}</Typography>;
+    },
     },
     {
       field: "Tel",
@@ -222,7 +235,7 @@ const Candidat = () => {
             case "Expert":
               return colors.greenAccent[400];
             case "Medium":
-              return colors.orange[700];
+              return colors.orange[500];
             case "Débutant":
               return colors.redAccent[600];
             default:
@@ -233,13 +246,13 @@ const Candidat = () => {
         const getIcon = (Résultat) => {
           switch (Résultat) {
             case "Expert":
-              return <CheckCircleOutlineIcon />;
+              return <StarIcon />;
             case "Medium":
-              return <CloudUploadIcon />;
+              return <TrendingUpIcon />;
             case "Débutant":
-              return <CancelIcon />;
+              return <SchoolIcon />;
             default:
-              return <SecurityOutlinedIcon />;
+              return <HelpOutlineIcon />;
           }
         };
 
@@ -281,7 +294,13 @@ const Candidat = () => {
       },
     },
   ];
-
+  const Header = ({ subtitle }) => {
+    return (
+      <Typography variant="h4" component="h2" sx={{ fontWeight: 'bold', color: 'black' }}>
+        {subtitle}
+      </Typography>
+    );
+  }
   return (
     <Box m="20px">
       <Header subtitle="Gérer les candidatures par poste" />

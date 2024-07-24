@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "./styles.module.css";
 
 const Signup = () => {
@@ -14,6 +14,7 @@ const Signup = () => {
   });
   const [error, setError] = useState("");
   const [msg, setMsg] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,6 +46,8 @@ console.log(data.selectedImage)
         },
       });
       setMsg(response.data.message);
+      navigate("/login"); // Redirige vers la page de connexion après inscription réussie
+
     } catch (error) {
       if (
         error.response &&

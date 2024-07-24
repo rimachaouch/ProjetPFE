@@ -31,17 +31,20 @@ function App() {
   const [userRole, setUserRole] = useState(null); // État pour stocker le rôle de l'utilisateur
 
   const location = useLocation();
- 
+  // Vérifier le rôle de l'utilisateur au chargement de la page
+  useEffect(() => {
+    // Récupérer les informations de l'utilisateur depuis le localStorage
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.role) {
+      setUserRole(user.role); // Définir le rôle dans l'état local
+    }
+  }, []);
  
   // Set isSidebar to false if the current path is '/login', otherwise set it to true
   useState(() => {
     setIsSidebarLogin(location.pathname !== '/login' && location.pathname !== '/signup');
     setIsTopbarLogin(location.pathname !== '/login' && location.pathname !== '/signup');
-    // Récupérer le rôle de l'utilisateur à partir du localStorage
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user) {
-      setUserRole(user.role);
-    }
+   
   }, [location.pathname]);
  
   return (
@@ -49,11 +52,13 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <div className="app">
-          {isSidebarLogin && <Sidebar />}
+        {isSidebarLogin && <Sidebar userRole={userRole} />}
        
           <main className="content">
-            {isTopbarLogin && <Topbar setIsSidebarLogin={setIsSidebarLogin} />}
+            {isTopbarLogin  && <Topbar setIsSidebarLogin={setIsSidebarLogin} />}
             <Routes>
+            
+             
               <Route path="/" element={<Accueil />} />
               <Route path="/Login" element={<Login />} />
               <Route path="/candidat" element={<Candidat />} />
@@ -71,9 +76,10 @@ function App() {
               <Route path="/Recrutement" element={<Recrutement/>} />
 
               <Route path="/Signup" element={<Signup/>} />
-              {userRole === 'responsable_rh' && <Route path="/Absence" element={<Absence />} />}
+              <Route path="/Absence" element={<Absence />} />
               <Route path="/ProfileP/:id" element={<ProfileP />} />
               <Route path="/Profile/:id" element={<Profile />} />
+              
             </Routes>
           </main>
         </div>

@@ -8,7 +8,7 @@ const  Candidats = () => {
   return (
     <Box m="2px">
       {/* HEADER */}
-      <Box display="flex" justifyContent="center" alignItems="center" mb="20px">
+      <Box display="flex" justifyContent="center" alignItems="center" mb="10px">
         <Typography variant="h3" >
         Analyse des candidats
         </Typography>
@@ -19,7 +19,7 @@ const  Candidats = () => {
         <iframe
         
         src="http://localhost:4848/single/?appid=C%3A%5CUsers%5Crchaouch%5CDocuments%5CQlik%5CSense%5CApps%5CRim_Chaouch_UI(1)(2).qvf&sheet=d646d17d-d307-4696-8767-c14ab47c2b0a&theme=card&opt=ctxmenu"
-        style={{ border: "none", width: "100%", height: "90vh" }} // Utilisation de % et vh pour flexibilité
+        scrolling="none"  style={{ overflow:"hidden", border: "none", width: "1120px", height: "600px" }}
         ></iframe>
       </Box>
     </Box>

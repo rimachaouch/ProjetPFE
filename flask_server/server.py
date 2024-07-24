@@ -151,14 +151,15 @@ def calculate_similarity(resume_text, job_description):
 # Fonction pour matcher le CV à la description de poste
 def match_resume_to_job(resume_content, job_description, expert_threshold=80, medium_threshold=60):
     similarity_score = calculate_similarity(resume_content, job_description)
-    similarity_percentage = similarity_score * 100
-    
+    similarity_percentage = (similarity_score * 100) + 50
+
+    print (similarity_percentage)
     if similarity_percentage >= expert_threshold:
-        return "Débutant", similarity_percentage
+        return "Expert", similarity_percentage
     elif similarity_percentage >= medium_threshold:
         return "Medium", similarity_percentage
-    else:
-        return "Expert", similarity_percentage
+    elif similarity_percentage < medium_threshold:
+        return "Débutant", similarity_percentage
 
 # Fonction pour calculer le score de correspondance des compétences
 def calculate_skill_match_score(cv_skills, job_skills):
@@ -173,7 +174,7 @@ def calculate_skill_match_score(cv_skills, job_skills):
         float: Le score de correspondance des compétences, arrondi à 2 décimales.
     """
     match_count = len(set(cv_skills) & set(job_skills))
-    skill_match_score = (match_count / len(job_skills)) * 100
+    skill_match_score = ((match_count / len(job_skills))) * 100
     return round(skill_match_score, 2)
 
 # Fonction pour préparer les données d'entrée pour la prédiction
@@ -312,7 +313,7 @@ def upload_cv():
                     'Texte_CV': cv_info,
                     #'Images': [f"{request.host_url}{app.config['EXTRACTED_IMAGES_FOLDER']}/{image}" for image in cv_info['Images']],
                     'predict_statut': predict_statut,
-                    'predict_proba': round(max_proba, 2),  # Arrondir la probabilité maximale à deux décimales
+                    'predict_proba': round(max_proba, 0),  # Arrondir la probabilité maximale à deux décimales
                 }
                 results.append(cv_info_dict)
         else:
