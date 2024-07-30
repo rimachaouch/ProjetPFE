@@ -312,7 +312,7 @@ def upload_cv():
                     'Compétences': cv_info.get('Compétences', 'N/A'),
                     'Texte_CV': cv_info,
                     #'Images': [f"{request.host_url}{app.config['EXTRACTED_IMAGES_FOLDER']}/{image}" for image in cv_info['Images']],
-                    'predict_statut': predict_statut,
+                    'predict_statut': prediction,
                     'predict_proba': round(max_proba, 0),  # Arrondir la probabilité maximale à deux décimales
                 }
                 results.append(cv_info_dict)

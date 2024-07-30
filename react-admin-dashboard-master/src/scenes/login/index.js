@@ -24,7 +24,7 @@ const Login = () => {
     try {
       const url = "http://localhost:3000/auth/login";
       const response = await axios.post(url, data);
-      console.log( "mezen",response.data);
+      console.log( "test",response.data);
       localStorage.setItem("user", JSON.stringify(response.data));
 
       localStorage.setItem("token", JSON.stringify(response.data));

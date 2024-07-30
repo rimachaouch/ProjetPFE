@@ -141,7 +141,7 @@ const CandidatP = () => {
     {
       field: "Email",
       headerName: "Email",
-      minWidth: 170,
+      minWidth: 190,
       flex: 1,
     },
     {
@@ -170,7 +170,7 @@ const CandidatP = () => {
           switch (predict_statut) {
             case "Validé":
               return colors.greenAccent[400];
-            case "Réfusé":
+            case "Refusé":
               return colors.redAccent[600];
             default:
               return colors.grey[700];
@@ -181,7 +181,7 @@ const CandidatP = () => {
           switch (predict_statut) {
             case "Validé":
               return <CheckCircleOutlineIcon />;
-            case "Réfusé":
+            case "Refusé":
               return <CancelIcon />;
             default:
               return <SecurityOutlinedIcon />;

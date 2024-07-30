@@ -8,7 +8,7 @@ const  Absence = () => {
   return (
     <Box m="2px">
       {/* HEADER */}
-      <Box display="flex" justifyContent="center" alignItems="center" mb="20px">
+      <Box display="flex" justifyContent="center" alignItems="center" mb="5px">
         <Typography variant="h3" >
           Analyse globale des absences
         </Typography>

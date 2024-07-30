@@ -1,17 +1,20 @@
 .login_container {
     width: 100%;
-    min-height: 100vh;
+    height: 100%;
     background-image: url('background.JPG');
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat; 
     display: flex;
     
     justify-content: center;
-    padding-top: 5%;
+    padding-top: 3%;
 
 }
  
 .login_form_container {
-    width: 300px;
-    height: 400px;
+    width: 350px;
+    height: 480px;
     display: flex;
     border-radius: 10px;
     box-shadow: 0px 3px 3px -2px rgb(0 0 0 / 20%),

@@ -5,7 +5,6 @@ import Sidebar from "./scenes/global/Sidebar";
 import Accueil from "./scenes/Accueil";
 import Candidat from "./scenes/Candidat";
 import CandidatP from "./scenes/CandidatP";
-import Contacts from "./scenes/contacts";
 import Profile from "./scenes/Profile";
 import ProfileP from "./scenes/ProfileP";
 import DashboardGlobal from "./scenes/DashboardGlobal";
@@ -63,7 +62,6 @@ function App() {
               <Route path="/Login" element={<Login />} />
               <Route path="/candidat" element={<Candidat />} />
               <Route path="/Candidats" element={<Candidats />} />
-              <Route path="/contacts" element={<Contacts />} />
               <Route path="/candidatP" element={<CandidatP />} />
               <Route path="/Demandes" element={<Demandes />} />
               <Route path="/EntréesSorties" element={<EntréesSorties />} />
